@@ -134,6 +134,7 @@
 			</plugins>
 		</pluginManagement>
 	</build>
+	
 	<profiles>
 		<profile>
 			<id>arq-wildfly-managed</id>
@@ -201,13 +202,6 @@
 								<java.util.logging.manager>org.jboss.logmanager.LogManager</java.util.logging.manager>
 							</systemPropertyVariables>
 							<argLine>--add-opens java.base/java.util=ALL-UNNAMED</argLine>
-							<excludes>
-								<exclude>**/*IT.java</exclude>
-							</excludes>
-							<includes>
-								<include>**/*ITARQ.java</include>
-							</includes>
-
 						</configuration>
 					</plugin>
 				</plugins>

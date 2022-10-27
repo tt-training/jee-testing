@@ -15,7 +15,7 @@ import org.junit.runner.RunWith;
 import com.crowdcollective.simple.ejb.SimpleEJB;
 
 @RunWith(Arquillian.class)
-public class ArqSimpleEJBITARQ {
+public class ArqSimpleEJBIT {
     @Inject
     SimpleEJB simpleEJB;
     
