@@ -38,5 +38,14 @@
         <property name="javaVmArguments">--add-opens java.base/java.util=ALL-UNNAMED</property>
         </configuration>
    </container>
+   <container qualifier="wildfly-local-remote">
+    <configuration>
+        <property name="managementAddress">127.0.0.1</property>
+        <property name="managementPort">9990</property>
+        <property name="protocol">http-remoting</property>
+        <property name="username">admin</property>
+        <property name="password">demodemo</property>
+    </configuration>
+</container>
 
 </arquillian>
