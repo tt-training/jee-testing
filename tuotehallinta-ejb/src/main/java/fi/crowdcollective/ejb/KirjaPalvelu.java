@@ -14,8 +14,7 @@ import fi.crowdcollective.model.Kustantaja;
 
 @Stateless
 public class KirjaPalvelu {
-    @Inject
-    private Logger log;
+    private static final Logger LOGGER = Logger.getLogger(KirjaPalvelu.class.getCanonicalName());
     @Inject
     private KirjaRepositorio kirjarepo;
     @Inject
@@ -29,7 +28,7 @@ public class KirjaPalvelu {
     public void luoKirja(Kirja kirja) {
         kirjarepo.uusiKirja(kirja);
         kirjaEvent.fire(kirja);
-        log.info("Laukaistu..");
+        LOGGER.info("Laukaistu..");
     }
     public Kirja poistaKirja(long id) {
         Kirja poistettu = kirjarepo.poistaKirja(id);

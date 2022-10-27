@@ -9,9 +9,7 @@
 	License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS 
 	OF ANY KIND, either express or implied. See the License for the specific 
 	language governing permissions and limitations under the License. -->
-<project xmlns="http://maven.apache.org/POM/4.0.0"
-	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<name>tuotehallinta</name>
 	<modelVersion>4.0.0</modelVersion>
 
@@ -38,6 +36,7 @@
 		<module>tuotehallinta-ejb</module>
 		<module>tuotehallinta-web</module>
 		<module>tuotehallinta-ear</module>
+		<module>tuotehallinta-report-aggregate</module>
 	</modules>
 
 	<pluginRepositories>
@@ -88,8 +87,19 @@
 		<!-- maven-compiler-plugin -->
 		<maven.compiler.target>1.8</maven.compiler.target>
 		<maven.compiler.source>1.8</maven.compiler.source>
+		<maven-dependency-plugin.version></maven-dependency-plugin.version>
 
+		<resteasy.version>3.0.19.Final</resteasy.version>
+
+		<!-- Sorry, but windows and git bash really mess things up.. -->
+		<sonar.coverage.jacoco.xmlReportPaths>
+    		${project.basedir}\..\tuotehallinta-report-aggregate\target\site\jacoco-aggregate\jacoco.xml
+		</sonar.coverage.jacoco.xmlReportPaths>
+		<arquillian-bom.version>1.6.0.Final</arquillian-bom.version>
+		<wildfly-arquillian.version>3.0.1.Final</wildfly-arquillian.version>
+		<maven-failsafe-plugin.version>3.0.0-M2</maven-failsafe-plugin.version>
 	</properties>
+
 
 	<dependencyManagement>
 		<dependencies>
@@ -112,6 +122,13 @@
 				<scope>compile</scope>
 			</dependency>
 
+			<!--			<dependency>
+				<groupId>fi.crowdcollective.tuotehallinta</groupId>
+				<artifactId>tuotehallinta-report-aggregate</artifactId>
+				<version>${project.version}</version>
+				<type>pom</type>
+			</dependency>
+-->
 
 			<dependency>
 				<groupId>org.wildfly.bom</groupId>
@@ -120,35 +137,67 @@
 				<type>pom</type>
 				<scope>import</scope>
 			</dependency>
+			<dependency>
+				<groupId>org.jboss.arquillian</groupId>
+				<artifactId>arquillian-bom</artifactId>
+				<version>${arquillian-bom.version}</version>
+				<scope>import</scope>
+				<type>pom</type>
+			</dependency>
 
 		</dependencies>
 	</dependencyManagement>
 
 	<build>
+		<plugins>
+			<!-- The WildFly plug-in deploys your ear to a local JBoss EAP container. 
+				Due to Maven's lack of intelligence with EARs we need to configure the WildFly 
+				Maven plug-in to skip deployment for all modules. We then enable it specifically 
+				in the ear module. -->
+			<plugin>
+				<groupId>org.wildfly.plugins</groupId>
+				<artifactId>wildfly-maven-plugin</artifactId>
+				<version>2.0.2.Final</version>
+				<configuration>
+					<skip>true</skip>
+				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-failsafe-plugin</artifactId>
+				<executions>
+					<execution>
+						<goals>
+							<goal>integration-test</goal>
+							<goal>verify</goal>
+						</goals>
+					</execution>
+				</executions>
+				<configuration>
+					<!-- Allow Mockito to create mocks in Java > 8 -->
+					<argLine>--add-opens java.base/java.lang=ALL-UNNAMED</argLine>
+				</configuration>
+			</plugin>
+		</plugins>
 		<pluginManagement>
 			<plugins>
-				<!-- The WildFly plug-in deploys your ear to a local JBoss EAP container. 
-					Due to Maven's lack of intelligence with EARs we need to configure the WildFly 
-					Maven plug-in to skip deployment for all modules. We then enable it specifically 
-					in the ear module. -->
-				<plugin>
-					<groupId>org.wildfly.plugins</groupId>
-					<artifactId>wildfly-maven-plugin</artifactId>
-					<version>2.0.2.Final</version>
-					<configuration>
-						<skip>true</skip>
-					</configuration>
-				</plugin>
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
 					<artifactId>maven-surefire-plugin</artifactId>
 					<configuration>
 						<!-- Allow Mockito to create mocks in Java > 8 -->
 						<argLine>--add-opens java.base/java.lang=ALL-UNNAMED</argLine>
+						<!--						<systemProperties>
+							<property>
+								<name>jersey.config.test.container.port</name>
+								<value>4410</value>
+							</property>
+						</systemProperties>  -->
 					</configuration>
 				</plugin>
 			</plugins>
 		</pluginManagement>
+
 	</build>
 </project>
 

@@ -28,9 +28,7 @@ import fi.crowdcollective.model.Kirja;
 
 @Path("/kirjat")
 public class KirjaRESTPalvelu {
-    @Inject
-    private Logger log;
-
+	private static final Logger log = Logger.getGlobal();
     @Inject
     private Validator validator;
 
